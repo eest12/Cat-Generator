@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cat Generator</title>
+    <meta name="description" content="A simple cat image generator." />
+    <link href="style.css" rel="stylesheet" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Kodchasan&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <div class="flex-wrapper">
+        <div class="flex-wrapper-section">
+            <!-- *************** HEADER *************** -->
+            <header>
+                <h1>Cat Generator</h1>
+            </header>
+
+            <!-- *************** MAIN CONTENT *************** -->
+            <div class="corner-border">
+                <div id="loader" class="loader"></div>
+                <img id="image" src="" alt="Cat">
+            </div>
+            <div class="container">
+                <input type="checkbox" id="sunglasses" name="sunglasses" value="Sunglasses">
+                <label for="sunglasses">&#128526;</label>
+                <input type="checkbox" id="showdesc" name="showdesc" value="ShowDesc">
+                <label for="showdesc">Breed info</label>
+            </div>
+            <button id="reload">New Kitty</button>
+            <div id="description" class="description container"></div>
+        </div>
+
+        <!-- *************** FOOTER *************** -->
+        <footer class="flex-wrapper-section">
+            <p>© 2023 by Erika Estrada. Images from The Cat API. :-)</p>
+        </footer>
+    </div>
+</body>
+<script type="text/javascript" src="config.js"></script>
+<script type="text/javascript" src="script.js"></script>
+
+</html>
