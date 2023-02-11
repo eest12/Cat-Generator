@@ -6,9 +6,22 @@ This riveting, fascinating website shows you a picture of a cat. Click the "New 
 
 The background of the page changes with each image, matching the dominant color of each cat pic. This feature works by calling the SightEngine API.
 
+### Note
+
+To make the webpage work locally, a `config.js` file is required. This file should contain the following:
+
+    const config = {
+        // https://thecatapi.com/
+        CAT_KEY: "your_key_here",
+        
+        // https://sightengine.com/
+        IMG_MOD_USER: "your_user_here",
+        IMG_MOD_SECRET: "your_secret_here"
+    };
+
 ## Future improvements
 
-- When the daily limit of calls to the SightEngine API has been reached, the page stops updating with new images, getting stuck on the loader icon. This should be improved so that new cat images are still displayed even if the background color functionality stops working.
+- When the daily limit of calls to the SightEngine API has been reached, the page stops updating with new images, getting stuck on the loader icon. A similar problem prevents the webpage from working properly on Github Pages, since the `config` file with the API key is missing. This should be improved so that new cat images are still displayed even when the background color functionality isn't working.
 - UI should be made responsive so it adjusts to different screen dimensions.
 - Speed could be improved by reducing the amount of API calls.
 - Because the images are made to cover a fixed width and height while retaining their original aspect ratio, sometimes a significant portion of the photo is cropped out (like the cat's head, or even the whole cat). This should be fixed to ensure the cat is always visible.
