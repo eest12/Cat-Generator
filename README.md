@@ -1,6 +1,6 @@
 # Cat-Generator
 
-    ![Cat Generator Screenshot](page-screenshot.jpg)
+![Cat Generator Screenshot](page-screenshot.jpg)
 
 This riveting, fascinating website shows you a picture of a cat. Click the "New Kitty" button to see a new cat. The images are fetched from The Cat API.
 
