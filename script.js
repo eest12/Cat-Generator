@@ -56,6 +56,43 @@ function showCatImage(imgSource, bgColor = "rgb(20, 20, 30)") {
 }
 
 /**
+ * Parses and shows the breed information if the breed checkbox is selected.
+ * @param {Object[]} breedData A list of cat breeds and their details in JSON format.
+ */
+function showBreedInfo(breedData) {
+    // make sure checkbox for breed info is checked
+    if (document.getElementById("showdesc").checked) {
+        descElem.style.display = "block";
+
+        // check if breed info is available for this image
+        if (breedData && breedData.length > 0) {
+            descElem.innerHTML = "";
+
+            for (let i = 0; i < breedData.length; i++) {
+                let name = breedData[i]["name"] ? breedData[i]["name"] : "Unknown";
+                let temp = breedData[i]["temperament"] ? breedData[i]["temperament"] : "Unknown";
+                let origin = breedData[i]["origin"] ? breedData[i]["origin"] : "Unknown";
+                let desc = breedData[i]["description"] ? breedData[i]["description"] : "Unknown";
+
+                descElem.innerHTML += `<dl><dt>Breed</dt><dd>${name}</dd>
+                <dt>Temperament</dt><dd>${temp}</dd>
+                <dt>Origin</dt><dd>${origin}</dd>
+                <dt>Description</dt><dd>${desc}</dd></dl>`;
+
+                // if there are more breeds after this one, add a divider
+                if (i < breedData.length - 1) {
+                    descElem.innerHTML += "<hr>";
+                }
+            }
+        } else {
+            descElem.innerHTML = "No breed info for this cat, sorry!";
+        }
+    } else {
+        descElem.style.display = "none";
+    }
+}
+
+/**
  * Loads a cat image by calling the Cat API.
  * Also changes the background color of the page to the dominant color in the cat image by calling the SightEngine API.
  */
@@ -89,28 +126,7 @@ function loadCat() {
                 // need to handle this error so the image still loads even if the background color doesn't change
 
                 showCatImage(catImageUrl, colorData["colors"]["dominant"]["hex"]); // set cat image and background color
-
-                // set breed info if checkbox is checked
-                if (document.getElementById("showdesc").checked) {
-                    descElem.style.display = "block";
-
-                    // check if breed info is available for this image
-                    if (catData[0]["breeds"] && catData[0]["breeds"].length > 0) {
-                        let name = catData[0]["breeds"][0]["name"] ? catData[0]["breeds"][0]["name"] : "Unknown";
-                        let temp = catData[0]["breeds"][0]["temperament"] ? catData[0]["breeds"][0]["temperament"] : "Unknown";
-                        let origin = catData[0]["breeds"][0]["origin"] ? catData[0]["breeds"][0]["origin"] : "Unknown";
-                        let desc = catData[0]["breeds"][0]["description"] ? catData[0]["breeds"][0]["description"] : "Unknown";
-
-                        descElem.innerHTML = `<dl><dt>Breed</dt><dd>${name}</dd>
-                        <dt>Temperament</dt><dd>${temp}</dd>
-                        <dt>Origin</dt><dd>${origin}</dd>
-                        <dt>Description</dt><dd>${desc}</dd></dl>`;
-                    } else {
-                        descElem.innerHTML = "No breed info for this cat, sorry!";
-                    }
-                } else {
-                    descElem.style.display = "none";
-                }
+                showBreedInfo(catData[0]["breeds"]); // update the breed description element
             });
         } else {
             showCatImage(catImageUrl); // set cat image without setting background color
