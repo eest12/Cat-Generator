@@ -2,13 +2,15 @@
 
 ![Cat Generator Screenshot](page-screenshot.jpg)
 
+[Cat Generator Page](https://eest12.github.io/Cat-Generator/)
+
 This riveting, fascinating website shows you a picture of a cat. Click the "New Kitty" button to see a new cat. The images are fetched from The Cat API.
 
-The background of the page changes with each image, matching the dominant color of each cat pic. This feature works by calling the SightEngine API.
+The background of the page changes with each image, matching the dominant color of each cat pic. This feature works by calling the SightEngine API. (Note: This functinality does not work on the deployed Github Pages site, because it does not have access to the API keys.)
 
-### Note
+### Setup
 
-To make the webpage work locally, a `config.js` file is required. This file should contain the following:
+To make the webpage work locally, a `config.js` file is recommended. This file should contain the following:
 
     const config = {
         // https://thecatapi.com/
@@ -18,6 +20,8 @@ To make the webpage work locally, a `config.js` file is required. This file shou
         IMG_MOD_USER: "your_user_here",
         IMG_MOD_SECRET: "your_secret_here"
     };
+
+A Cat API key is only required to see the cat breed info. A SightEngine key is required for the background color to match each cat image. Without these keys, the rest of the page will still work.
 
 ## Future improvements
 
