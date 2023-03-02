@@ -15,9 +15,15 @@ try {
 }
 
 /**
+ * Processes data returned by an API.
+ * @callback requestCallback
+ * @param {string} responseMessage
+ */
+
+/**
  * Makes a GET call.
- * @param {*} url The API URL to call.
- * @param {*} callback The callback function to run after getting data back from the API.
+ * @param {string} url The API URL to call.
+ * @param {requestCallback} callback The callback function to run after getting data back from the API.
  */
 function ajax_get(url, callback) {
     let xmlhttp = new XMLHttpRequest();
@@ -35,6 +41,18 @@ function ajax_get(url, callback) {
 
     xmlhttp.open("GET", url, true);
     xmlhttp.send();
+}
+
+/**
+ * Sets the source of the cat image element, sets the color of the page background, and hides the loader element.
+ * @param {string} imgSource The URL or path of the cat image.
+ * @param {string} bgColor The color to set the page background to.
+ */
+function showCatImage(imgSource, bgColor = "rgb(20, 20, 30)") {
+    document.getElementsByTagName("body")[0].style.backgroundColor = bgColor; // set background color
+    imageElem.src = imgSource; // set cat image source
+    loadElem.style.display = "none"; // hide loader
+    imageElem.style.display = "block"; // show cat image
 }
 
 /**
@@ -60,40 +78,43 @@ function loadCat() {
     // call cat api to fetch image
     ajax_get(catUrl, function (catData) {
         let catImageUrl = catData[0]["url"];
-        let dominantColorUrl = `https://api.sightengine.com/1.0/check.json?url=${catImageUrl}&models=properties&api_user=${imgModUser}&api_secret=${imgModSecret}`;
 
-        // call sightengine api for dominant color of image
-        ajax_get(dominantColorUrl, function (colorData) {
-            // note: this callback function won't execute once the allowed amount of api calls to sightengine has been exceeded
-            // need to handle this error so the image still loads even if the background color doesn't change
+        // use the sightengine api only if the user and secret are available
+        if (imgModUser && imgModSecret) {
+            let dominantColorUrl = `https://api.sightengine.com/1.0/check.json?url=${catImageUrl}&models=properties&api_user=${imgModUser}&api_secret=${imgModSecret}`;
 
-            document.getElementsByTagName("body")[0].style.backgroundColor = colorData["colors"]["dominant"]["hex"]; // set background color
-            imageElem.src = catImageUrl; // set cat image source
-            loadElem.style.display = "none"; // hide loader
-            imageElem.style.display = "block"; // show cat image
+            // call sightengine api for dominant color of image
+            ajax_get(dominantColorUrl, function (colorData) {
+                // note: this callback function won't execute once the allowed amount of api calls to sightengine has been exceeded
+                // need to handle this error so the image still loads even if the background color doesn't change
 
-            // set breed info if checkbox is checked
-            if (document.getElementById("showdesc").checked) {
-                descElem.style.display = "block";
+                showCatImage(catImageUrl, colorData["colors"]["dominant"]["hex"]); // set cat image and background color
 
-                // check if breed info is available for this image
-                if (catData[0]["breeds"] && catData[0]["breeds"].length > 0) {
-                    let name = catData[0]["breeds"][0]["name"] ? catData[0]["breeds"][0]["name"] : "Unknown";
-                    let temp = catData[0]["breeds"][0]["temperament"] ? catData[0]["breeds"][0]["temperament"] : "Unknown";
-                    let origin = catData[0]["breeds"][0]["origin"] ? catData[0]["breeds"][0]["origin"] : "Unknown";
-                    let desc = catData[0]["breeds"][0]["description"] ? catData[0]["breeds"][0]["description"] : "Unknown";
+                // set breed info if checkbox is checked
+                if (document.getElementById("showdesc").checked) {
+                    descElem.style.display = "block";
 
-                    descElem.innerHTML = `<dl><dt>Breed</dt><dd>${name}</dd>
+                    // check if breed info is available for this image
+                    if (catData[0]["breeds"] && catData[0]["breeds"].length > 0) {
+                        let name = catData[0]["breeds"][0]["name"] ? catData[0]["breeds"][0]["name"] : "Unknown";
+                        let temp = catData[0]["breeds"][0]["temperament"] ? catData[0]["breeds"][0]["temperament"] : "Unknown";
+                        let origin = catData[0]["breeds"][0]["origin"] ? catData[0]["breeds"][0]["origin"] : "Unknown";
+                        let desc = catData[0]["breeds"][0]["description"] ? catData[0]["breeds"][0]["description"] : "Unknown";
+
+                        descElem.innerHTML = `<dl><dt>Breed</dt><dd>${name}</dd>
                         <dt>Temperament</dt><dd>${temp}</dd>
                         <dt>Origin</dt><dd>${origin}</dd>
                         <dt>Description</dt><dd>${desc}</dd></dl>`;
+                    } else {
+                        descElem.innerHTML = "No breed info for this cat, sorry!";
+                    }
                 } else {
-                    descElem.innerHTML = "No breed info for this cat, sorry!";
+                    descElem.style.display = "none";
                 }
-            } else {
-                descElem.style.display = "none";
-            }
-        });
+            });
+        } else {
+            showCatImage(catImageUrl); // set cat image without setting background color
+        }
     });
 }
 

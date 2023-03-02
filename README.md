@@ -21,7 +21,7 @@ To make the webpage work locally, a `config.js` file is required. This file shou
 
 ## Future improvements
 
-- When the daily limit of calls to the SightEngine API has been reached, the page stops updating with new images, getting stuck on the loader icon. A similar problem prevents the webpage from working properly on Github Pages, since the `config` file with the API key is missing. This should be improved so that new cat images are still displayed even when the background color functionality isn't working.
+- When the daily limit of calls to the SightEngine API has been reached, the page stops updating with new images, getting stuck on the loader icon. This should be improved so that new cat images are still displayed even when the background color functionality isn't working.
 - UI should be made responsive so it adjusts to different screen dimensions.
 - Speed could be improved by reducing the amount of API calls.
 - Because the images are made to cover a fixed width and height while retaining their original aspect ratio, sometimes a significant portion of the photo is cropped out (like the cat's head, or even the whole cat). This should be fixed to ensure the cat is always visible.
