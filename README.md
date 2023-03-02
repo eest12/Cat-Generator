@@ -29,5 +29,4 @@ A Cat API key is only required to see the cat breed info. A SightEngine key is r
 - UI should be made responsive so it adjusts to different screen dimensions.
 - Speed could be improved by reducing the amount of API calls.
 - Because the images are made to cover a fixed width and height while retaining their original aspect ratio, sometimes a significant portion of the photo is cropped out (like the cat's head, or even the whole cat). This should be fixed to ensure the cat is always visible.
-- Breed info should show details of all the cats in the image if there are multiple, not just of one breed, since it is uncertain which cat the description refers to.
 - **Debatable improvement:** Currently, checking "Breed info" only enables this feature for the next cat image. This feature should show the breed details of the currently displayed image as soon as the checkmark is selected.
