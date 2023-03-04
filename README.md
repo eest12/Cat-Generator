@@ -1,12 +1,14 @@
-# Cat-Generator
+# Cat Generator
 
 ![Cat Generator Screenshot](page-screenshot.jpg)
+
+[Cat Generator Live Page](https://main--jazzy-paprenjak-04757a.netlify.app/)
 
 This riveting, fascinating website shows you a picture of a cat. Click the "New Kitty" button to see a new cat. The images are fetched from The Cat API.
 
 The background of the page changes with each image, matching the dominant color of each cat pic. This feature works by calling the SightEngine API.
 
-### Setup
+## Setup
 
 To make the webpage work locally, create a `.env` file at the root of the project. This file should contain the following:
 
