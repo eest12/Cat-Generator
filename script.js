@@ -1,47 +1,6 @@
-let catKey = "";
-let imgModUser = "";
-let imgModSecret = "";
 let loadElem = document.getElementById("loader");
 let imageElem = document.getElementById("image");
 let descElem = document.getElementById("description");
-
-// set secret variables if available from the config file
-try {
-    catKey = config.CAT_KEY;
-    imgModUser = config.IMG_MOD_USER;
-    imgModSecret = config.IMG_MOD_SECRET;
-} catch (err) {
-    console.log(err.message);
-}
-
-/**
- * Processes data returned by an API.
- * @callback requestCallback
- * @param {string} responseMessage
- */
-
-/**
- * Makes a GET call.
- * @param {string} url The API URL to call.
- * @param {requestCallback} callback The callback function to run after getting data back from the API.
- */
-function ajax_get(url, callback) {
-    let xmlhttp = new XMLHttpRequest();
-    xmlhttp.onreadystatechange = function () {
-        if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
-            try {
-                let data = JSON.parse(xmlhttp.responseText);
-                callback(data);
-            } catch (err) {
-                console.log(err.message + " in " + xmlhttp.responseText);
-                return;
-            }
-        }
-    };
-
-    xmlhttp.open("GET", url, true);
-    xmlhttp.send();
-}
 
 /**
  * Sets the source of the cat image element, sets the color of the page background, and hides the loader element.
@@ -96,42 +55,31 @@ function showBreedInfo(breedData) {
  * Loads a cat image by calling the Cat API.
  * Also changes the background color of the page to the dominant color in the cat image by calling the SightEngine API.
  */
-function loadCat() {
-    let catUrl = "https://api.thecatapi.com/v1/images/search?mime_types=jpg,png";
+async function loadCat() {
+    const netlifyFuncPath = "/.netlify/functions/fetch-api";
 
-    // fetch only images of cats with sunglasses
+    // cat api query parameters
+    const catApiId = "cat_api";
+    let sunglasses = "false";
+
+    // set whether to request only images of cats with sunglasses
     if (document.getElementById("sunglasses").checked) {
-        catUrl += "&category_ids=4";
-    }
-
-    // use the api key if available; key is required only for some operations, like reading breed info
-    if (catKey) {
-        catUrl += `&api_key=${catKey}`;
+        sunglasses = "true";
     }
 
     imageElem.style.display = "none"; // hide cat image
     loadElem.style.display = "block"; // show loader
 
-    // call cat api to fetch image
-    ajax_get(catUrl, function (catData) {
-        let catImageUrl = catData[0]["url"];
+    // request cat data
+    const catData = await fetch(`${netlifyFuncPath}?id=${catApiId}&sunglasses=${sunglasses}`).then((res) => res.json());
+    
+    // sightengine api query and request
+    const seApiId = "se_api";
+    const catImageUrl = catData["data"][0]["url"];
+    const colorData = await fetch(`${netlifyFuncPath}?id=${seApiId}&imgUrl=${catImageUrl}`).then((res) => res.json());
 
-        // use the sightengine api only if the user and secret are available
-        if (imgModUser && imgModSecret) {
-            let dominantColorUrl = `https://api.sightengine.com/1.0/check.json?url=${catImageUrl}&models=properties&api_user=${imgModUser}&api_secret=${imgModSecret}`;
-
-            // call sightengine api for dominant color of image
-            ajax_get(dominantColorUrl, function (colorData) {
-                // note: this callback function won't execute once the allowed amount of api calls to sightengine has been exceeded
-                // need to handle this error so the image still loads even if the background color doesn't change
-
-                showCatImage(catImageUrl, colorData["colors"]["dominant"]["hex"]); // set cat image and background color
-                showBreedInfo(catData[0]["breeds"]); // update the breed description element
-            });
-        } else {
-            showCatImage(catImageUrl); // set cat image without setting background color
-        }
-    });
+    showCatImage(catImageUrl, colorData["data"]["colors"]["dominant"]["hex"]); // set cat image and background color
+    showBreedInfo(catData["data"][0]["breeds"]); // update the breed description element
 }
 
 // load cat image when the button is pressed
