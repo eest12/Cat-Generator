@@ -56,30 +56,42 @@ function showBreedInfo(breedData) {
  * Also changes the background color of the page to the dominant color in the cat image by calling the SightEngine API.
  */
 async function loadCat() {
-    const netlifyFuncPath = "/.netlify/functions/fetch-api";
+    try {
+        const netlifyFuncPath = "/.netlify/functions/fetch-api";
 
-    // cat api query parameters
-    const catApiId = "cat_api";
-    let sunglasses = "false";
+        // cat api query parameters
+        const catApiId = "cat_api";
+        let sunglasses = "false";
 
-    // set whether to request only images of cats with sunglasses
-    if (document.getElementById("sunglasses").checked) {
-        sunglasses = "true";
+        // set whether to request only images of cats with sunglasses
+        if (document.getElementById("sunglasses").checked) {
+            sunglasses = "true";
+        }
+
+        imageElem.style.display = "none"; // hide cat image
+        loadElem.style.display = "block"; // show loader
+
+        // request cat data
+        const catData = await fetch(`${netlifyFuncPath}?id=${catApiId}&sunglasses=${sunglasses}`).then((res) => res.json());
+        
+        if (catData["error"]) {
+            throw new Error(catData["error"]);
+        }
+
+        // sightengine api query and request
+        const seApiId = "se_api";
+        const catImageUrl = catData["data"][0]["url"];
+        const colorData = await fetch(`${netlifyFuncPath}?id=${seApiId}&imgUrl=${catImageUrl}`).then((res) => res.json());
+        
+        if (colorData["error"]) {
+            throw new Error(colorData["error"]);
+        }
+
+        showCatImage(catImageUrl, colorData["data"]["colors"]["dominant"]["hex"]); // set cat image and background color
+        showBreedInfo(catData["data"][0]["breeds"]); // update the breed description element
+    } catch (err) {
+        console.log(err);
     }
-
-    imageElem.style.display = "none"; // hide cat image
-    loadElem.style.display = "block"; // show loader
-
-    // request cat data
-    const catData = await fetch(`${netlifyFuncPath}?id=${catApiId}&sunglasses=${sunglasses}`).then((res) => res.json());
-    
-    // sightengine api query and request
-    const seApiId = "se_api";
-    const catImageUrl = catData["data"][0]["url"];
-    const colorData = await fetch(`${netlifyFuncPath}?id=${seApiId}&imgUrl=${catImageUrl}`).then((res) => res.json());
-
-    showCatImage(catImageUrl, colorData["data"]["colors"]["dominant"]["hex"]); // set cat image and background color
-    showBreedInfo(catData["data"][0]["breeds"]); // update the breed description element
 }
 
 // load cat image when the button is pressed
